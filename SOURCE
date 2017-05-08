@@ -1,0 +1,105 @@
+#include<iostream>
+#include <string>
+using namespace std;
+
+string memory[32];
+
+string convertToBinary(int n){
+	if (n == 0)
+		return "0";
+
+	if (n == 1) {
+		return "1";
+	}
+	while (n > 1) {
+		if (n % 2 == 0) {
+			return (convertToBinary(n / 2) + "0");
+		}
+		else {
+			return (convertToBinary(n / 2) + "1");
+		}
+	}
+	
+}
+
+int convertToDecimal(string n) {
+	int temp = stoi(n);
+	return temp;
+}
+
+void STA(string location,int accu) {
+	int loc = convertToDecimal(location);
+	memory[loc] = convertToBinary(accu);
+}
+
+int LDA(string location) {
+	int loc = convertToDecimal(location);
+	int num =convertToDecimal(memory[loc]);
+	return num;
+}
+
+string simpCom() {
+	int accu = 0;
+	int pc = 0;
+	string ins;
+	while (pc >= 0) {
+		ins = memory[pc].substr(0,3);
+		if (ins == "000") {
+			pc++;
+			STA(memory[pc].substr(4, 5), accu);
+			cout << "000"<<endl;
+		}
+		else if (ins == "001") {
+			pc++;
+			accu = LDA(memory[pc].substr(4, 5));
+			cout << "accu:" << accu;
+			cout << "001" << endl;
+		}
+		else if (ins == "010") {
+			pc++;
+			if (accu == 0) {
+				pc = stoi(memory[pc].substr(4, 5));
+			}
+			cout << "010" << endl;
+		}
+		else if (ins == "011") {
+			pc++;
+			cout << "011" << endl;
+		}
+		else if (ins == "100") {
+			pc++;
+			accu -= 1;
+			cout << "100" << endl;
+		}
+		else if (ins == "101") {
+			pc++;
+			accu += 1;
+			cout << "101" << endl;
+		}
+		else if (ins == "110") {
+			pc++;
+			pc = stoi(memory[pc].substr(4, 5));
+			cout << "110" << endl;
+		}
+		else if(ins=="111"){
+			cout << "111" << endl;
+			break;
+		}
+	}
+	return convertToBinary(accu);
+}
+
+int main() {
+	string temp;
+	getline(cin, temp);
+	while (!cin.eof()) {
+		memory[0] = temp;
+		for (int i = 1; i < 32; i++) {
+			getline(cin, memory[i]);
+		}
+		cout<<simpCom();
+		getline(cin, temp);
+	}
+
+	return 0;
+}
